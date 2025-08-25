@@ -1,538 +1,70 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Fall Guys Creative Hub</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- Titan One -->
+  <meta charset="UTF-8">
+  <title>Fall Maps - Partage de cartes Fall Guys</title>
   <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --pink:#ff55b8; --cyan:#13d7e4; --yellow:#ffd166; --bg:#f4f9ff;
-    }
-    *{
-        box-sizing:border-box;
-        font-family: 'Titan One';
-        font-weight: 100;
-        letter-spacing: 1px;
-    }
-    body{margin:0;background:linear-gradient(180deg,#fff 0%,#eef7ff 100%);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    header{position:sticky;top:0;z-index:10;background:#fffccf80;backdrop-filter:saturate(1.2) blur(6px);border-bottom:1px solid #e9e9ef;padding:10px 16px;display:flex;gap:16px;align-items:center;justify-content:space-between}
-    h1{font-family:'Titan One',cursive;color:var(--pink);margin:0;font-size:24px;letter-spacing:.5px}
-    .wrap{max-width:1100px;margin:0 auto;padding:16px}
-    .row{display:flex;gap:12px;flex-wrap:wrap}
-    .btn{border:0;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:600}
-    .btn-primary{background:var(--cyan);color:#fff}
-    .btn-ghost{background:#fff;border:1px solid #e6e6f0}
-    .btn-danger{background:#ff5a5a;color:#fff}
-    .card{background:#fff;border:1px solid #e9e9ef;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.04)}
-    .card h3{margin:0 0 6px 0}
-    .pad{padding:14px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
-    .muted{color:#666}
-    .tag{display:inline-block;background:#f4f6ff;border:1px solid #e3e7ff;border-radius:999px;padding:2px 8px;margin:2px;font-size:12px}
-    .badge{display:inline-block;background:var(--pink);color:#fff;border-radius:8px;padding:2px 8px;font-size:12px}
-    .img-hero{width:100%;height:160px;object-fit:cover;border-radius:10px;border:1px solid #eee}
-    .field{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
-    input,select,textarea{border:1px solid #dfe3ef;border-radius:10px;padding:8px 10px;font-size:14px}
-    textarea{min-height:80px;resize:vertical}
-    .tabs{display:flex;gap:6px;margin:8px 0 16px}
-    .tab{border:1px solid #e3e3ee;background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer}
-    .tab.active{background:var(--yellow)}
-    .stars{display:flex;gap:4px}
-    .pill{background:#fff;border:1px dashed #cfd4ea;border-radius:8px;padding:6px 8px;font-size:12px}
-    .flex{display:flex;gap:8px;align-items:center}
-    .right{margin-left:auto}
-    dialog{border:0;border-radius:16px;width:min(900px,calc(100vw - 24px))}
-    dialog::backdrop{background:rgba(0,0,0,.4)}
-    .small{font-size:12px}
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <div class="flex">
-    <div style="width:36px;height:36px;border-radius:12px;background:var(--cyan);color:#fff;display:grid;place-items:center;font-family:'Titan One',cursive">FG</div>
-    <div>
-      <h1>Fall Guys Creative Hub</h1>
-      <div class="small muted">Non affilié à Mediatonic/Epic Games</div>
+  <header>
+    <h1>🎉 Fall Maps</h1>
+    <div class="row">
+      <button id="loginBtn" class="btn btn-primary">Connexion Google</button>
+      <button id="logoutBtn" class="btn btn-danger" style="display:none;">Déconnexion</button>
     </div>
-  </div>
-  <div class="flex">
-    <div id="userBadge" class="pill muted">Déconnecté</div>
-    <button id="loginBtn" class="btn btn-primary">Connexion Google</button>
-    <button id="logoutBtn" class="btn btn-danger" style="display:none;">Déconnexion</button>
-  </div>
-</header>
+  </header>
 
-<main class="wrap">
-  <!-- Onglets -->
-  <div class="tabs">
-    <button class="tab active" data-tab="explore">Explorer</button>
-    <button class="tab" data-tab="submit">Publier</button>
-    <button class="tab" data-tab="profile">Mon profil</button>
-  </div>
-
-  <!-- Explorer -->
-  <section id="tab-explore">
-    <div class="card pad">
-      <h3 style="margin-bottom:6px;">Rechercher des maps</h3>
-      <div class="row">
-        <input id="q" placeholder="Nom / description / code / créateur" style="flex:1;min-width:240px;">
-        <select id="filterType">
-          <option value="">Tous types</option>
-          <option value="course">Course</option>
-          <option value="survie">Survie</option>
-          <option value="chasse">Chasse</option>
-        </select>
-        <select id="filterMaxDiff">
-          <option value="">Diff ≤ 5</option>
-          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-        </select>
-        <button id="searchBtn" class="btn btn-ghost">Filtrer</button>
-      </div>
-      <div id="tagFilters" class="row" style="margin-top:6px;"></div>
-    </div>
-
-    <div id="mapsGrid" class="grid" style="margin-top:14px;"></div>
-    <div id="emptyHint" class="muted" style="padding:10px;display:none;">Aucune map ne correspond.</div>
-  </section>
-
-  <!-- Publier -->
-  <section id="tab-submit" style="display:none;">
-    <div class="card pad">
-      <h3 style="font-family:'Titan One',cursive;color:var(--pink)">Publier une map</h3>
+  <main class="wrap">
+    <section class="card pad">
+      <h2>Publier une carte</h2>
       <form id="mapForm">
-        <div class="row">
-          <div class="field" style="flex:1;min-width:220px">
-            <label>Code</label>
-            <input id="code" placeholder="XXXX-XXXX-XXXX" required>
-          </div>
-          <div class="field" style="flex:1;min-width:220px">
-            <label>Nom</label>
-            <input id="name" placeholder="Nom de la map" required>
-          </div>
-          <div class="field" style="width:160px">
-            <label>Type</label>
-            <select id="type">
-              <option value="course">Course</option>
-              <option value="survie">Survie</option>
-              <option value="chasse">Chasse</option>
-            </select>
-          </div>
-          <div class="field" style="width:160px">
-            <label>Difficulté</label>
-            <select id="difficulty">
-              <option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option>
-            </select>
-          </div>
+        <div class="field">
+          <label for="code">Code de la carte</label>
+          <input type="text" id="code" required placeholder="XXXX-XXXX-XXXX">
         </div>
         <div class="field">
-          <label>Description</label>
-          <textarea id="description" placeholder="Décris le gameplay, astuces…"></textarea>
+          <label for="title">Nom</label>
+          <input type="text" id="title" required>
         </div>
         <div class="field">
-          <label>Tags (séparés par des virgules)</label>
-          <input id="tags" placeholder="ex: speedrun, solo, party, précis">
+          <label for="description">Description</label>
+          <textarea id="description"></textarea>
         </div>
         <div class="field">
-          <label>Images (3 max)</label>
-          <input id="images" type="file" accept="image/*" multiple>
-          <div class="small muted">Taille recommandée &lt; 2MB par image</div>
+          <label for="type">Type de map</label>
+          <select id="type">
+            <option value="course">Course</option>
+            <option value="survie">Survie</option>
+            <option value="chasse">Chasse</option>
+          </select>
         </div>
-        <div class="row" style="justify-content:flex-end">
-          <button type="submit" class="btn btn-primary">Publier</button>
+        <div class="field">
+          <label for="difficulty">Difficulté</label>
+          <select id="difficulty">
+            <option value="1">⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="5">⭐⭐⭐⭐⭐</option>
+          </select>
         </div>
-        <div id="formMsg" class="small muted" style="margin-top:6px;"></div>
+        <div class="field">
+          <label for="image">Image</label>
+          <input type="file" id="image">
+        </div>
+        <button type="submit" class="btn btn-primary">Publier</button>
       </form>
-    </div>
-  </section>
+    </section>
 
-  <!-- Mon profil -->
-  <section id="tab-profile" style="display:none;">
-    <div class="card pad">
-      <h3>Mes maps</h3>
-      <div id="myGrid" class="grid" style="margin-top:12px;"></div>
-      <div id="myEmpty" class="muted" style="display:none;">Tu n’as pas encore publié de map.</div>
-    </div>
-  </section>
-</main>
+    <h2>🎮 Toutes les cartes</h2>
+    <div id="mapsList" class="grid"></div>
+  </main>
 
-<!-- Détails / Avis -->
-<dialog id="mapDialog">
-  <div class="pad" style="padding-bottom:0">
-    <div class="row" style="justify-content:space-between;align-items:flex-start">
-      <div>
-        <h3 id="dlgName" style="font-family:'Titan One',cursive;color:var(--pink)"></h3>
-        <div class="muted small">Code: <span id="dlgCode" class="pill"></span></div>
-        <div class="row" style="margin-top:6px">
-          <span id="dlgType" class="badge"></span>
-          <span id="dlgDiff" class="pill"></span>
-        </div>
-      </div>
-      <button id="dlgClose" class="btn btn-ghost">Fermer</button>
-    </div>
-  </div>
-  <div class="pad">
-    <div id="dlgImages" class="row"></div>
-    <p id="dlgDesc" class="muted" style="margin-top:8px"></p>
-    <div id="dlgTags" class="row"></div>
-
-    <div class="row" style="margin-top:10px;align-items:center">
-      <button id="likeBtn" class="btn btn-ghost">👍 <span id="likeCount">0</span></button>
-      <button id="dislikeBtn" class="btn btn-ghost">👎 <span id="dislikeCount">0</span></button>
-      <div class="right muted small" id="dlgCreator"></div>
-    </div>
-
-    <hr style="margin:12px 0">
-    <h4>Avis</h4>
-    <div class="row" style="align-items:center">
-      <label>Note</label>
-      <select id="reviewRating"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select>
-      <input id="reviewText" placeholder="Ton avis..." style="flex:1">
-      <button id="reviewBtn" class="btn btn-primary">Publier</button>
-    </div>
-    <div id="reviews" class="row" style="margin-top:10px;flex-direction:column"></div>
-  </div>
-</dialog>
-
-<!-- Firebase SDK (CDN) -->
-<script type="module">
-  // ===== Firebase imports
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import {
-    getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy,
-    doc, updateDoc, getDoc, setDoc, deleteDoc, where, runTransaction
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-  // ===== Replace with your Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyBN5lO0zt_zI3qdh2vzJ30TEOdx16tpRbI",
-  authDomain: "fallmapsv2.firebaseapp.com",
-  projectId: "fallmapsv2",
-  storageBucket: "fallmapsv2.firebasestorage.app",
-  messagingSenderId: "6916105475",
-  appId: "1:6916105475:web:76afeb37e2d466c7dff536",
-  measurementId: "G-TES1TH5SPM"
-};
-
-  // ===== Init
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
-
-  // ===== UI helpers
-  const $ = (sel)=>document.querySelector(sel);
-  const $$ = (sel)=>document.querySelectorAll(sel);
-  const userBadge = $("#userBadge");
-  const loginBtn = $("#loginBtn");
-  const logoutBtn = $("#logoutBtn");
-
-  let currentUser = null;
-  let allMaps = []; // cache pour filtrage local
-  let activeTags = new Set();
-
-  // ===== Tabs
-  const tabs = $$(".tab");
-  const sections = {
-    explore: $("#tab-explore"),
-    submit: $("#tab-submit"),
-    profile: $("#tab-profile"),
-  };
-  tabs.forEach(t=>{
-    t.onclick=()=>{
-      tabs.forEach(x=>x.classList.remove("active"));
-      t.classList.add("active");
-      Object.values(sections).forEach(s=>s.style.display="none");
-      sections[t.dataset.tab].style.display="";
-    };
-  });
-
-  // ===== Auth
-  loginBtn.onclick = async ()=>{
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-  };
-  logoutBtn.onclick = ()=>signOut(auth);
-
-  onAuthStateChanged(auth, (user)=>{
-    currentUser = user;
-    userBadge.textContent = user ? (user.displayName || "Utilisateur") : "Déconnecté";
-    loginBtn.style.display = user ? "none" : "";
-    logoutBtn.style.display = user ? "" : "none";
-    renderMyMaps();
-  });
-
-  // ===== Submit form
-  const form = $("#mapForm");
-  form.onsubmit = async (e)=>{
-    e.preventDefault();
-    if(!currentUser){ alert("Connecte-toi d'abord !"); return; }
-
-    const code = $("#code").value.trim();
-    const name = $("#name").value.trim();
-    const description = $("#description").value.trim();
-    const type = $("#type").value;
-    const difficulty = Number($("#difficulty").value);
-    const tags = ($("#tags").value || "").split(",").map(t=>t.trim()).filter(Boolean).slice(0,12);
-    const files = $("#images").files;
-
-    $("#formMsg").textContent = "Publication en cours…";
-
-    try{
-      // 1) créer la map
-      const mapRef = await addDoc(collection(db,"maps"),{
-        code,name,description,type,difficulty,tags,
-        creatorName: currentUser.displayName || "",
-        creatorUid: currentUser.uid,
-        createdAt: serverTimestamp(),
-        likesCount:0, dislikesCount:0, images:[]
-      });
-
-      // 2) uploader les images puis mettre à jour le document
-      const urls = [];
-      const max = Math.min(files.length,3);
-      for(let i=0;i<max;i++){
-        const f = files[i];
-        const ref = storageRef(storage, `maps/${mapRef.id}/${Date.now()}_${f.name}`);
-        await uploadBytes(ref, f);
-        const url = await getDownloadURL(ref);
-        urls.push(url);
-      }
-      if(urls.length){
-        await updateDoc(doc(db,"maps",mapRef.id),{ images: urls });
-      }
-
-      $("#formMsg").textContent = "Map publiée ✔️";
-      form.reset();
-    }catch(err){
-      console.error(err);
-      $("#formMsg").textContent = "Erreur pendant la publication.";
-      alert("Échec publication : vérifie tes règles Firestore/Storage et ta config.");
-    }
-  };
-
-  // ===== Realtime: toutes les maps
-  const mapsGrid = $("#mapsGrid");
-  const emptyHint = $("#emptyHint");
-  const tagFilters = $("#tagFilters");
-
-  const mapsQuery = query(collection(db,"maps"), orderBy("createdAt","desc"));
-  onSnapshot(mapsQuery, (snap)=>{
-    allMaps = snap.docs.map(d=>({ id:d.id, ...d.data() }));
-    buildTagFilters();
-    renderMaps();
-    renderMyMaps();
-  });
-
-  // ===== Filtres
-  $("#searchBtn").onclick = renderMaps;
-  $("#q").addEventListener("keydown", (e)=>{ if(e.key==="Enter") renderMaps(); });
-  $("#filterType").onchange = renderMaps;
-  $("#filterMaxDiff").onchange = renderMaps;
-
-  function buildTagFilters(){
-    const set = new Set();
-    allMaps.forEach(m => (m.tags||[]).forEach(t=>set.add(t)));
-    const tags = Array.from(set).sort();
-    tagFilters.innerHTML = "";
-    tags.forEach(tag=>{
-      const b = document.createElement("button");
-      b.className = "tag";
-      b.textContent = `#${tag}`;
-      b.onclick = ()=>{ activeTags.has(tag)?activeTags.delete(tag):activeTags.add(tag); b.classList.toggle("badge"); renderMaps(); };
-      tagFilters.appendChild(b);
-    });
-  }
-
-  function renderMaps(){
-    const q = $("#q").value.trim().toLowerCase();
-    const type = $("#filterType").value;
-    const maxDiff = Number($("#filterMaxDiff").value)||null;
-
-    const filtered = allMaps.filter(m=>{
-      if(type && m.type!==type) return false;
-      if(maxDiff && (m.difficulty||5)>maxDiff) return false;
-      if(activeTags.size){
-        const ok = [...activeTags].some(t=>m.tags?.includes(t));
-        if(!ok) return false;
-      }
-      if(q){
-        const blob = `${m.name} ${m.description} ${m.code} ${m.creatorName}`.toLowerCase();
-        if(!blob.includes(q)) return false;
-      }
-      return true;
-    });
-
-    mapsGrid.innerHTML = "";
-    filtered.forEach(m=>mapsGrid.appendChild(mapCard(m)));
-    emptyHint.style.display = filtered.length? "none":"block";
-  }
-
-  function mapCard(m){
-    const c = document.createElement("div");
-    c.className = "card pad";
-    c.innerHTML = `
-      ${m.images?.[0] ? `<img class="img-hero" src="${m.images[0]}" alt="${m.name}">` : ``}
-      <h3 style="font-family:'Titan One',cursive">${esc(m.name)}</h3>
-      <div class="muted small">Code: <span class="pill">${esc(m.code)}</span></div>
-      <div class="row" style="margin:6px 0">
-        <span class="badge">${esc(m.type)}</span>
-        <span class="pill">Difficulté ${m.difficulty}/5</span>
-        <span class="right muted small">par ${esc(m.creatorName||"?")}</span>
-      </div>
-      <p class="muted" style="min-height:40px">${esc(m.description)}</p>
-      <div class="row">${(m.tags||[]).map(t=>`<span class="tag">#${esc(t)}</span>`).join("")}</div>
-      <div class="row" style="margin-top:8px">
-        <button class="btn btn-ghost">Détails</button>
-        <button class="btn btn-ghost">👍 ${m.likesCount||0}</button>
-        <button class="btn btn-ghost">👎 ${m.dislikesCount||0}</button>
-      </div>
-    `;
-    const [btnDetails, btnLike, btnDislike] = c.querySelectorAll("button");
-    btnDetails.onclick = ()=>openDialog(m.id);
-    btnLike.onclick = ()=>vote(m.id, +1);
-    btnDislike.onclick = ()=>vote(m.id, -1);
-    return c;
-  }
-
-  // ===== Vote (likes/dislikes) avec transaction + doc vote par utilisateur
-  async function vote(mapId, value){
-    if(!currentUser){ alert("Connecte-toi pour voter."); return; }
-    const mapRef = doc(db,"maps",mapId);
-    const voteRef = doc(db,"maps",mapId,"votes",currentUser.uid);
-
-    await runTransaction(db, async (tx)=>{
-      const mSnap = await tx.get(mapRef);
-      if(!mSnap.exists()) throw new Error("Map inconnue");
-      let { likesCount=0, dislikesCount=0 } = mSnap.data();
-      const vSnap = await tx.get(voteRef);
-      const prev = vSnap.exists()? (vSnap.data().value||0) : 0;
-      const next = (prev===value)? 0 : value; // toggle si même vote
-
-      // retirer l'ancien
-      if(prev===1) likesCount--;
-      if(prev===-1) dislikesCount--;
-      // ajouter le nouveau
-      if(next===1) likesCount++;
-      if(next===-1) dislikesCount++;
-
-      if(next===0) tx.delete(voteRef); else tx.set(voteRef,{ value: next });
-      tx.update(mapRef,{ likesCount, dislikesCount });
-    }).catch(err=>{ console.error(err); alert("Vote impossible (vérifie les règles)"); });
-  }
-
-  // ===== Détails + Avis
-  const dlg = $("#mapDialog");
-  $("#dlgClose").onclick = ()=>dlg.close();
-  let reviewsUnsub = null;
-
-  async function openDialog(mapId){
-    const ref = doc(db,"maps",mapId);
-    const s = await getDoc(ref);
-    if(!s.exists()) return;
-    const m = { id: s.id, ...s.data() };
-
-    $("#dlgName").textContent = m.name;
-    $("#dlgCode").textContent = m.code;
-    $("#dlgType").textContent = m.type;
-    $("#dlgDiff").textContent = `Difficulté ${m.difficulty}/5`;
-    $("#dlgDesc").textContent = m.description;
-    $("#dlgCreator").textContent = `Créateur : ${m.creatorName||"?"}`;
-
-    const imgs = $("#dlgImages"); imgs.innerHTML = "";
-    (m.images||[]).forEach(url=>{
-      const im = document.createElement("img");
-      im.src = url; im.className="img-hero"; im.style.width="220px"; im.style.height="130px";
-      imgs.appendChild(im);
-    });
-
-    const tagWrap = $("#dlgTags"); tagWrap.innerHTML = "";
-    (m.tags||[]).forEach(t=>{
-      const sp = document.createElement("span"); sp.className="tag"; sp.textContent="#"+t; tagWrap.appendChild(sp);
-    });
-
-    // compteurs
-    $("#likeCount").textContent = m.likesCount||0;
-    $("#dislikeCount").textContent = m.dislikesCount||0;
-    $("#likeBtn").onclick = ()=>vote(m.id, +1);
-    $("#dislikeBtn").onclick = ()=>vote(m.id, -1);
-
-    // Avis en temps réel
-    if(reviewsUnsub) reviewsUnsub();
-    const revCol = collection(db,"maps",m.id,"reviews");
-    const revQ = query(revCol, orderBy("createdAt","desc"));
-    reviewsUnsub = onSnapshot(revQ, (snap)=>{
-      const list = $("#reviews"); list.innerHTML = "";
-      snap.forEach(d=>{
-        const r = d.data();
-        const card = document.createElement("div");
-        card.className = "card pad";
-        card.innerHTML = `
-          <div class="row" style="justify-content:space-between">
-            <div class="small"><b>${esc(r.displayName||"Anonyme")}</b></div>
-            <div class="small">Note: ${r.rating}/5</div>
-          </div>
-          <div class="muted" style="margin-top:6px">${esc(r.text||"")}</div>
-        `;
-        list.appendChild(card);
-      });
-    });
-
-    // poster avis
-    $("#reviewBtn").onclick = async ()=>{
-      if(!currentUser){ alert("Connecte-toi pour poster un avis."); return; }
-      const rating = Number($("#reviewRating").value);
-      const text = $("#reviewText").value.trim();
-      if(!text){ alert("Écris un avis."); return; }
-      await addDoc(collection(db,"maps",m.id,"reviews"),{
-        uid: currentUser.uid,
-        displayName: currentUser.displayName||"",
-        rating, text, createdAt: serverTimestamp()
-      });
-      $("#reviewText").value="";
-      $("#reviewRating").value="3";
-    };
-
-    dlg.showModal();
-  }
-
-  // ===== Mon profil (maps de l'utilisateur)
-  function renderMyMaps(){
-    const grid = $("#myGrid");
-    const empty = $("#myEmpty");
-    grid.innerHTML = "";
-
-    const mine = currentUser ? allMaps.filter(m=>m.creatorUid===currentUser.uid) : [];
-    mine.forEach(m=>{
-      const card = document.createElement("div");
-      card.className="card pad";
-      card.innerHTML = `
-        ${m.images?.[0] ? `<img class="img-hero" src="${m.images[0]}">` : ``}
-        <h3>${esc(m.name)}</h3>
-        <div class="muted small">Code: <span class="pill">${esc(m.code)}</span></div>
-        <div class="row">
-          <button class="btn btn-ghost">Détails</button>
-          <button class="btn btn-danger right">Supprimer</button>
-        </div>
-      `;
-      const [btnDetails, btnDel] = card.querySelectorAll("button");
-      btnDetails.onclick = ()=>openDialog(m.id);
-      btnDel.onclick = async ()=>{
-        if(confirm("Supprimer cette map ?")){
-          await deleteDoc(doc(db,"maps",m.id)).catch(e=>alert("Suppression refusée par les règles."));
-        }
-      };
-      grid.appendChild(card);
-    });
-
-    empty.style.display = mine.length? "none":"";
-  }
-
-  // ===== Utils
-  function esc(s){ return (s||"").replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c])); }
-</script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
