@@ -1,0 +1,158 @@
+:root {
+  --pink: #ff55b8;
+  --cyan: #13d7e4;
+  --yellow: #ffd166;
+  --bg: #f4f9ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #fff 0%, #eef7ff 100%);
+  font-family: 'Titan One', cursive;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fffccf80;
+  backdrop-filter: saturate(1.2) blur(6px);
+  border-bottom: 1px solid #e9e9ef;
+  padding: 10px 16px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+h1 {
+  font-family: 'Titan One', cursive;
+  color: var(--pink);
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: 0.5px;
+}
+
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.1s ease;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.btn-primary {
+  background: var(--cyan);
+  color: #fff;
+}
+
+.btn-ghost {
+  background: #fff;
+  border: 1px solid #e6e6f0;
+}
+
+.btn-danger {
+  background: #ff5a5a;
+  color: #fff;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e9e9ef;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.card h3 {
+  margin: 0 0 6px 0;
+}
+
+.pad {
+  padding: 14px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.muted {
+  color: #666;
+}
+
+.tag {
+  display: inline-block;
+  background: #f4f6ff;
+  border: 1px solid #e3e7ff;
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin: 2px;
+  font-size: 12px;
+}
+
+.badge {
+  display: inline-block;
+  background: var(--pink);
+  color: #fff;
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+.img-hero {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+input,
+select,
+textarea {
+  border: 1px solid #dfe3ef;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-family: 'Titan One', cursive;
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.small {
+  font-size: 12px;
+}
